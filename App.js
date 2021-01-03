@@ -1,18 +1,39 @@
-import React from 'react';
-import { Text, View } from 'react-native';
+import React, { Component } from 'react';
+import { BackHandler } from 'react-native';
 import { WebView } from 'react-native-webview';
 
+export default class WebViewMoviezSpace extends Component {
+    constructor(props) {
+        super(props);
+        this.WEBVIEW_REF = React.createRef();
+    }
 
-const YourApp = () => {
-    const uri = 'https://urpravovoen.ru/';
-    return (
-      <WebView
-        source={{
-          uri: uri
-        }}
-        style={{ marginTop: 20 }}
-      />
-    );
+    componentDidMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+    }
+
+    handleBackButton = ()=>{
+        this.WEBVIEW_REF.current.goBack();
+        return true;
+    }
+
+    onNavigationStateChange(navState) {
+        this.setState({
+            canGoBack: navState.canGoBack
+        });
+    }
+
+    render(){
+        return (
+            <WebView
+                source={{ uri: "https://urpravovoen.ru/" }}
+                ref={this.WEBVIEW_REF}
+                onNavigationStateChange={this.onNavigationStateChange.bind(this)}
+            />
+        )
+    }
 }
-
-export default YourApp;
